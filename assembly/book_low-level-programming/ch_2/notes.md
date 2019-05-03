@@ -9,9 +9,9 @@ ld -o <OUTPUT_PATH_2> <OUTPUT_PATH_1>
 
 ## Assembly Functions
 
-The first six arguments passed to a function are stored in `rdi, rsi, rdx, rcx, r8`, and `r9`. The rest are passed on to the stack in reverse order.
+The first six arguments passed to a function are stored in `rdi`, `rsi`, `rdx`, `rcx`, `r8`, and `r9`. The rest are passed on to the stack in reverse order.
 
-These registers must be restored by the procedure being called after execution: `rbx, rbp, rsp, r12-r15`.
+These registers must be restored by the procedure being called after execution: `rbx`, `rbp`, `rsp`, `r12-r15`.
 
 	You should never use rbp and rsp. They are implicitly used during the execution. rsp is used as a stack pointer.
 
@@ -33,7 +33,6 @@ The pattern of calling a function is as follows:
 
 ### `xor` - Logical Exclusive OR
 
-
 Performs a bitwise OR (XOR) operation on the destination (first) and source (second) operands and stores the result in the destination operand location.
 
 ### `jmp`, `ja`, and similar ones
@@ -46,7 +45,7 @@ When executing a near jump, the processor jumps to the address (within the curre
 
 ### `cmp` - Compare Two Operands
 
-Compares the first source operand with the second oeprands and sets the status flags in the EFLAGS register according to the results. The comparison is performed by subtracting the second operand from the first operand and then setting the status flags in the same manner as the SUB instruction.
+Compares the first source operand with the second operands and sets the status flags in the EFLAGS register according to the results. The comparison is performed by subtracting the second operand from the first operand and then setting the status flags in the same manner as the SUB instruction.
 
 ### `mov` - Move
 
@@ -74,9 +73,19 @@ Divides the value in AX, DX:AX, EDX:EAX by the source operand and stores the res
 
 ### `add`, `sub`
 
-### `neg`
+### `neg` - Two's Complement Negation
 
-### `call`, `ret`
+Replaces the value of operand (the destination operand) with its two's complement. (This operation is equivalent to substracting the operand from 0.) The destination operand is located in a general-purpose register or a memory location.
+
+### `call` - Call Procedure
+
+Saves procedure linking information on the stack and branches to the called procedure specified using the target operand. The target operand specifies the address of the first instruction in the called procedure.
+
+When executing a near call (in the same code segment), the processor pushes the value of the EIP register (which contains the offset of the instruction following the CALL instruction) on the stack (for use later a return-instruction pointer).
+
+### `ret` - Return from Procedure
+
+Transfers program control to a return address located on the top of the stack. The address is usually placed on the stack by a CALL instruction, and the return is made to the instruction that follows the CALL instruction.
 
 ### `push` - Push Word, Doubleword or Quadword Onto the Stack
 
