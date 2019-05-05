@@ -1,0 +1,6 @@
+*
+!.gitignore
+!*.asm
+!*.md
+!*.code-workspace
+!*.editorconfig

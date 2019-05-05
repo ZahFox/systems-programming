@@ -13,7 +13,7 @@ The first six arguments passed to a function are stored in `rdi`, `rsi`, `rdx`, 
 
 These registers must be restored by the procedure being called after execution: `rbx`, `rbp`, `rsp`, `r12-r15`.
 
-	You should never use rbp and rsp. They are implicitly used during the execution. rsp is used as a stack pointer.
+    You should never use rbp and rsp. They are implicitly used during the execution. rsp is used as a stack pointer.
 
 All other registers should be saved by the caller before invoking a different procedure.
 
@@ -61,11 +61,11 @@ Subtracts 1 from the destination operand, while preserving the state of the CF f
 
 ### `mul`, `imul` - Signed and Unsigned Multiplication (i is signed)
 
-* **One-operand form** - Same for signed and unsigned. The source operand is a register or memory location and is multiplied by the value in AL, AX, EAX, or RAX register (depending on the operand size) and the product (twice the size of the input operand) is stored in the AX, DX:AX, EDX:EAX, RDX:RAX registers, respectively.
+- **One-operand form** - Same for signed and unsigned. The source operand is a register or memory location and is multiplied by the value in AL, AX, EAX, or RAX register (depending on the operand size) and the product (twice the size of the input operand) is stored in the AX, DX:AX, EDX:EAX, RDX:RAX registers, respectively.
 
-* **Two-operand form** - Source and destination operands are multiplied and stored in the destination operand location. The result is truncated.
+- **Two-operand form** - Source and destination operands are multiplied and stored in the destination operand location. The result is truncated.
 
-* **Three-operand form** - The first source operand (from register or memory) is multiplied by a second source operand (from and immediate value) and stored in the destination operand location. The result is truncated.
+- **Three-operand form** - The first source operand (from register or memory) is multiplied by a second source operand (from and immediate value) and stored in the destination operand location. The result is truncated.
 
 ### `div`, `idiv` - Signed and Unsigned Division (i is signed)
 
