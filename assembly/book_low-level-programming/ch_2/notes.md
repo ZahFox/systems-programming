@@ -17,7 +17,7 @@ These registers must be restored by the procedure being called after execution: 
 
 All other registers should be saved by the caller before invoking a different procedure.
 
-Implementation-wise, we are returning values by sorting them in `rax` before the function ends its execution. If you need to return two values, you are allowed to use `rdx` for the second one.
+Implementation-wise, we are returning values by storing them in `rax` before the function ends its execution. If you need to return two values, you are allowed to use `rdx` for the second one.
 
 The pattern of calling a function is as follows:
 
