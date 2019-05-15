@@ -7,6 +7,38 @@ nasm -felf64 <FILE_PATH> -o <OUTPUT_PATH_1>
 ld -o <OUTPUT_PATH_2> <OUTPUT_PATH_1>
 ```
 
+## Registers
+
+### General Purpose Registers
+
+These are 64-bit registers with names r0, r1, ..., r15.
+
+* r0 (rax) - used as an accumulator (and implicitly during div)
+* r3 (rbx) - Used for base addressing
+* r1 (rcx) - Used for cycles (e.g., in a loop)
+* r2 (rdx) - Stores data during input/output operations
+* r4 (rsp) - Stores the address of the topmost element in the hardware stack.
+* r5 (rbp) - Stack frame's base.
+* r6 (rsi) - Source index in string manipulation (such as movsd)
+* r7 (rdi) - Destination index in string manipulation commands
+*  r9...r15 - Store temporal variables (r10 saves CPU flags when syscall is executed)
+
+### Accessing Parts of Registers
+
+Addressing a part of a register is possible. You can address its lowest 32 bits, lowest 16 bits, or lowest 8 bits. When using r0, ..., r15 you can do this by suffixing the register's name (d for 32-bit, w for 16-bit, b for 8-bit).
+
+Examples: 
+* **r7b** is the lowest byte of register r7.
+* **r3w** consists of the lowest two bytes of r3.
+* **r0d** consists of the lowest four bytes of r0.
+* **rax** - 64-bit rax, 32-bit eax, 16-bit ax, upper 8-bit ah, lower 8-bit al. (same pattern for rax, rbx, rcx, and rdx).
+* The smallest parts of rsi and rdi are sil and dil.
+* The smallest parts of rsp and rbp are spl and bpl.
+
+### Flags Register
+
+Another accessible register is called `rflags`. It stores flags, which reflect the current program state--for example, what was the result of the last arithmetic instruction: was it negative, did an overflow happen, etc. Its smaller parts are called `eflags` (32 bit) and `flags` (16 bit).
+
 ## Assembly Functions
 
 The first six arguments passed to a function are stored in `rdi`, `rsi`, `rdx`, `rcx`, `r8`, and `r9`. The rest are passed on to the stack in reverse order.
