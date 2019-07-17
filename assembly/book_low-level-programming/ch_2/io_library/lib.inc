@@ -31,20 +31,19 @@ print_string:
     push rdi
     call string_length ; string length stored in rax
     pop rsi  ; store the string to print in rsi
-    mov rdx, rax ; sting length used for # of bytes argument
+    mov rdx, rax ; string length used for # of bytes argument
     mov rdi, 1 ; stdout file descriptor
     mov rax, 1 ; 'write' syscall identifier
     syscall
     ret
 
-print_char:
-    mov rsi, rdi
-    mov rdx, 1
-    mov rdi, 1
-    mov rax, 1
-    syscall
-    ret
 
+print_char:
+    push rdi
+    mov rdi, rsp
+    call print_string 
+    pop rdi
+    ret
 
 print_newline:
     mov rdi, 0xA

@@ -21,13 +21,14 @@ These are 64-bit registers with names r0, r1, ..., r15.
 * r5 (rbp) - Stack frame's base.
 * r6 (rsi) - Source index in string manipulation (such as movsd)
 * r7 (rdi) - Destination index in string manipulation commands
-*  r9...r15 - Store temporal variables (r10 saves CPU flags when syscall is executed)
+* r9...r15 - Store temporal variables (r10 saves CPU flags when syscall is executed)
 
 ### Accessing Parts of Registers
 
 Addressing a part of a register is possible. You can address its lowest 32 bits, lowest 16 bits, or lowest 8 bits. When using r0, ..., r15 you can do this by suffixing the register's name (d for 32-bit, w for 16-bit, b for 8-bit).
 
-Examples: 
+Examples:
+
 * **r7b** is the lowest byte of register r7.
 * **r3w** consists of the lowest two bytes of r3.
 * **r0d** consists of the lowest four bytes of r0.
@@ -53,11 +54,11 @@ Implementation-wise, we are returning values by storing them in `rax` before the
 
 The pattern of calling a function is as follows:
 
-- Save all caller-saved registers you want to survive function call (you can use push for that).
-- Store arguments in the relevant registers (`rdi`, `rsi`, etc.).
-- Invoke function using `call`.
-- After functions returns, `rax` will hold the return value.
-- Restore caller-sasved registers stored before the function call.
+* Save all caller-saved registers you want to survive function call (you can use push for that).
+* Store arguments in the relevant registers (`rdi`, `rsi`, etc.).
+* Invoke function using `call`.
+* After functions returns, `rax` will hold the return value.
+* Restore caller-saved registers stored before the function call.
 
 ## Commen Intel Assembly Instructions
 
@@ -93,11 +94,11 @@ Subtracts 1 from the destination operand, while preserving the state of the CF f
 
 ### `mul`, `imul` - Signed and Unsigned Multiplication (i is signed)
 
-- **One-operand form** - Same for signed and unsigned. The source operand is a register or memory location and is multiplied by the value in AL, AX, EAX, or RAX register (depending on the operand size) and the product (twice the size of the input operand) is stored in the AX, DX:AX, EDX:EAX, RDX:RAX registers, respectively.
+* **One-operand form** - Same for signed and unsigned. The source operand is a register or memory location and is multiplied by the value in AL, AX, EAX, or RAX register (depending on the operand size) and the product (twice the size of the input operand) is stored in the AX, DX:AX, EDX:EAX, RDX:RAX registers, respectively.
 
-- **Two-operand form** - Source and destination operands are multiplied and stored in the destination operand location. The result is truncated.
+* **Two-operand form** - Source and destination operands are multiplied and stored in the destination operand location. The result is truncated.
 
-- **Three-operand form** - The first source operand (from register or memory) is multiplied by a second source operand (from and immediate value) and stored in the destination operand location. The result is truncated.
+* **Three-operand form** - The first source operand (from register or memory) is multiplied by a second source operand (from and immediate value) and stored in the destination operand location. The result is truncated.
 
 ### `div`, `idiv` - Signed and Unsigned Division (i is signed)
 
