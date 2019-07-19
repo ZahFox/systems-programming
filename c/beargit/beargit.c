@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "beargit.h"
 #include "util.h"
@@ -12,19 +12,22 @@
  * - Functions return 0 if successful, 1 if there is an error.
  * - All error conditions in the function description need to be implemented
  *   and written to stderr. We catch some additional errors for you in main.c.
- * - Output to stdout needs to be exactly as specified in the function description.
+ * - Output to stdout needs to be exactly as specified in the function
+ * description.
  * - Only edit this file (beargit.c)
  * - You are given the following helper functions:
  *   * fs_mkdir(dirname): create directory <dirname>
  *   * fs_rm(filename): delete file <filename>
  *   * fs_mv(src,dst): move file <src> to <dst>, overwriting <dst> if it exists
  *   * fs_cp(src,dst): copy file <src> to <dst>, overwriting <dst> if it exists
- *   * write_string_to_file(filename,str): write <str> to filename (overwriting contents)
- *   * read_string_from_file(filename,str,size): read a string of at most <size> (incl.
- *     NULL character) from file <filename> and store it into <str>. Note that <str>
- *     needs to be large enough to hold that string.
+ *   * write_string_to_file(filename,str): write <str> to filename (overwriting
+ * contents)
+ *   * read_string_from_file(filename,str,size): read a string of at most <size>
+ * (incl. NULL character) from file <filename> and store it into <str>. Note
+ * that <str> needs to be large enough to hold that string.
  *  - You NEED to test your code. The autograder we provide does not contain the
- *    full set of tests that we will run on your code. See "Step 5" in the homework spec.
+ *    full set of tests that we will run on your code. See "Step 5" in the
+ * homework spec.
  */
 
 /* beargit init
@@ -42,15 +45,15 @@ int beargit_init(void) {
 
   FILE* findex = fopen(".beargit/.index", "w");
   fclose(findex);
-  
-  write_string_to_file(".beargit/.prev", "0000000000000000000000000000000000000000");
+
+  write_string_to_file(".beargit/.prev",
+                       "0000000000000000000000000000000000000000");
 
   return 0;
 }
 
-
 /* beargit add <filename>
- * 
+ *
  * - Append filename to list in .beargit/.index if it isn't in there yet
  *
  * Possible errors (to stderr):
@@ -62,10 +65,10 @@ int beargit_init(void) {
 
 int beargit_add(const char* filename) {
   FILE* findex = fopen(".beargit/.index", "r");
-  FILE *fnewindex = fopen(".beargit/.newindex", "w");
+  FILE* fnewindex = fopen(".beargit/.newindex", "w");
 
   char line[FILENAME_SIZE];
-  while(fgets(line, sizeof(line), findex)) {
+  while (fgets(line, sizeof(line), findex)) {
     strtok(line, "\n");
     if (strcmp(line, filename) == 0) {
       fprintf(stderr, "ERROR: File %s already added\n", filename);
@@ -87,9 +90,8 @@ int beargit_add(const char* filename) {
   return 0;
 }
 
-
 /* beargit rm <filename>
- * 
+ *
  * See "Step 2" in the homework 1 spec.
  *
  */
@@ -113,8 +115,7 @@ int is_commit_msg_ok(const char* msg) {
   return 0;
 }
 
-void next_commit_id(char* commit_id) {
-  /* COMPLETE THE REST */
+void next_commit_id(char* commit_id) { /* COMPLETE THE REST */
 }
 
 int beargit_commit(const char* msg) {
@@ -139,8 +140,23 @@ int beargit_commit(const char* msg) {
  */
 
 int beargit_status() {
-  /* COMPLETE THE REST */
+  FILE* findex = fopen(".beargit/.index", "r");
+  char line[FILENAME_SIZE];
+  int count = 0;
 
+  fprintf(stdout, "Tracked files:\n\n");
+
+  while (fgets(line, sizeof(line), findex)) {
+    strtok(line, "\n");
+    fprintf(stdout, "  %s\n", line);
+    count++;
+  }
+
+  if (count == 1) {
+    fprintf(stdout, "\n%d file total\n", count);
+  } else {
+    fprintf(stdout, "\n%d files total\n", count);
+  }
   return 0;
 }
 
