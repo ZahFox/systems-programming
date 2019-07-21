@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -97,8 +98,35 @@ int beargit_add(const char* filename) {
  */
 
 int beargit_rm(const char* filename) {
-  /* COMPLETE THE REST */
+  const char newindex[19] = ".beargit/.newindex";
+  const char index[16] = ".beargit/.index";
+  FILE* findex = fopen(index, "r");
+  FILE* fnewindex = fopen(newindex, "w");
+  uint8_t found_file = 0;
 
+  char line[FILENAME_SIZE];
+  while (fgets(line, sizeof(line), findex)) {
+    strtok(line, "\n");
+
+    if (found_file) {
+      fprintf(fnewindex, "%s\n", line);
+    } else if (strcmp(line, filename) == 0) {
+      found_file = 1;
+    } else {
+      fprintf(fnewindex, "%s\n", line);
+    }
+  }
+
+  fclose(findex);
+  fclose(fnewindex);
+
+  if (!found_file) {
+    fs_rm(newindex);
+    fprintf(stderr, "ERROR: File %s not tracked\n", filename);
+    return 2;
+  }
+
+  fs_mv(newindex, index);
   return 0;
 }
 
@@ -138,7 +166,6 @@ int beargit_commit(const char* msg) {
  * See "Step 1" in the homework 1 spec.
  *
  */
-
 int beargit_status() {
   FILE* findex = fopen(".beargit/.index", "r");
   char line[FILENAME_SIZE];
