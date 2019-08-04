@@ -30,7 +30,7 @@ int beargit_init(void) {
   fprintf(fbranches, "%s\n", "master");
   fclose(fbranches);
    
-  write_string_to_file(".beargit/.prev", "0000000000000000000000000000000000000000");
+  write_string_to_file(".beargit/.prev", INIT_COMMIT);
   write_string_to_file(".beargit/.current_branch", "master");
 
   return 0;
@@ -167,8 +167,9 @@ char commit_int_to_char(int i) {
 
 void next_commit_id_hw1(char* commit_id, char* new_commit_id) {
   uint8_t carry = 1;
+  const uint8_t len = strlen(commit_id);
 
-  for (int i = COMMIT_ID_BYTES - 1; i > -1; i--) {
+  for (int i = len-1; i > -1; i--) {
     int value = commit_char_to_int(*(commit_id + i));
     value += carry;
     if (value > 2) {
@@ -180,7 +181,7 @@ void next_commit_id_hw1(char* commit_id, char* new_commit_id) {
     *(new_commit_id + i) = commit_int_to_char(value);
   }
 
-  *(new_commit_id + COMMIT_ID_BYTES) = '\0';
+  *(new_commit_id + len) = '\0';
 }
 
 int beargit_commit_hw1(const char* msg) {
@@ -344,15 +345,33 @@ int get_branch_number(const char* branch_name) {
   return branch_index;
 }
 
-/* beargit branch
- *
- * See "Step 6" in the homework 2 spec.
- *
- */
-
 int beargit_branch() {
-  /* COMPLETE THE REST */
+  char current_branch[BRANCHNAME_SIZE];
+  read_string_from_file(".beargit/.current_branch", current_branch, BRANCHNAME_SIZE);
 
+  uint8_t check_active = 0;
+  if (strlen(current_branch) > 0) {
+    check_active = 1;
+  }
+
+  FILE* findex = fopen(".beargit/.branches", "r");
+  char branch[BRANCHNAME_SIZE];
+
+  while (fgets(branch, sizeof(branch), findex)) {
+    strtok(branch, "\n");
+    if (check_active) {
+      if (strcmp(branch, current_branch)) {
+         fprintf(stdout, "  %s\n", branch);
+      } else {
+         check_active = 0;
+         fprintf(stdout, "* %s\n", branch);
+      }
+    } else {
+      fprintf(stdout, "  %s\n", branch);
+    }
+  }
+
+  fclose(findex);
   return 0;
 }
 
