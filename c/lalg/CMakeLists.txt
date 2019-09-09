@@ -5,4 +5,4 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories(lib)
 
-add_executable(lalg_demo main.c lib/vector.h lib/includes.h)
+add_executable(lalg_demo main.c lib/vector.h lib/includes.h lib/error.h lib/error.c lib/vector.c)
