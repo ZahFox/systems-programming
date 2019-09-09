@@ -9,28 +9,7 @@
 #include "beargit.h"
 #include "util.h"
 
-/* Implementation Notes:
- *
- * - Functions return 0 if successful, 1 if there is an error.
- * - All error conditions in the function description need to be implemented
- *   and written to stderr. We catch some additional errors for you in main.c.
- * - Output to stdout needs to be exactly as specified in the function
- * description.
- * - Only edit this file (beargit.c)
- * - You are given the following helper functions:
- *   * fs_mkdir(dirname): create directory <dirname>
- *   * fs_rm(filename): delete file <filename>
- *   * fs_mv(src,dst): move file <src> to <dst>, overwriting <dst> if it exists
- *   * fs_cp(src,dst): copy file <src> to <dst>, overwriting <dst> if it exists
- *   * write_string_to_file(filename,str): write <str> to filename (overwriting
- * contents)
- *   * read_string_from_file(filename,str,size): read a string of at most <size>
- * (incl. NULL character) from file <filename> and store it into <str>. Note
- * that <str> needs to be large enough to hold that string.
- *  - You NEED to test your code. The autograder we provide does not contain the
- *    full set of tests that we will run on your code. See "Step 5" in the
- * homework spec.
- */
+static const char* INIT_COMMIT = "0000000000000000000000000000000000000000";
 
 /* beargit init
  *
@@ -47,8 +26,7 @@ int beargit_init(void) {
   FILE* findex = fopen(".beargit/.index", "w");
   fclose(findex);
 
-  write_string_to_file(".beargit/.prev",
-                       "0000000000000000000000000000000000000000");
+  write_string_to_file(".beargit/.prev", INIT_COMMIT);
 
   return 0;
 }
@@ -266,13 +244,32 @@ int beargit_status() {
   return 0;
 }
 
-/* beargit log
- *
- * See "Step 4" in the homework 1 spec.
- *
- */
 int beargit_log() {
-  /* COMPLETE THE REST */
+  char* msg_file = ".msg";
+  char* prev_file = ".prev";
+  char last_commit_id[COMMIT_ID_SIZE];
+  read_string_from_file(".beargit/.prev", last_commit_id, COMMIT_ID_SIZE);
+
+  if (!strcmp(last_commit_id, INIT_COMMIT)) {
+      fprintf(stderr, "ERROR: There are no commits!\n");
+      return 1;
+  }
+
+  char *current_commit_id = last_commit_id;
+  puts("");
+
+  while (strcmp(current_commit_id, INIT_COMMIT)) {
+      char current_msg_file[strlen(msg_file) + COMMIT_ID_SIZE + 10];
+      sprintf(current_msg_file, ".beargit/%s/%s", current_commit_id, msg_file);
+
+      char current_msg[MSG_SIZE];
+      read_string_from_file(current_msg_file, current_msg, MSG_SIZE);
+      fprintf(stdout, "commit %s\n    %s\n\n", current_commit_id, current_msg);
+
+      char current_prev_file[strlen(prev_file) + COMMIT_ID_SIZE + 10];
+      sprintf(current_prev_file, ".beargit/%s/%s", current_commit_id, prev_file);
+      read_string_from_file(current_prev_file, current_commit_id, COMMIT_ID_SIZE);
+  }
 
   return 0;
 }
