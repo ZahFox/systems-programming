@@ -1,14 +1,16 @@
 #ifndef TRANSLATE_H
 #define TRANSLATE_H
 
-#include <stdint.h>
+#include "include.h"
+#include "tables.h"
 
 /* IMPLEMENT ME - see documentation in translate.c */
-unsigned write_pass_one(FILE* output, const char* name, char** args, int num_args);
+unsigned write_pass_one(FILE* output, const char* name, char** args,
+                        int num_args);
 
 /* IMPLEMENT ME - see documentation in translate.c */
-int translate_inst(FILE* output, const char* name, char** args, size_t num_args, 
-    uint32_t addr, SymbolTable* symtbl, SymbolTable* reltbl);
+int translate_inst(FILE* output, const char* name, char** args, size_t num_args,
+                   uint32_t addr, SymbolTable* symtbl, SymbolTable* reltbl);
 
 /* Declaring helper functions: */
 
@@ -28,10 +30,10 @@ int write_lui(uint8_t opcode, FILE* output, char** args, size_t num_args);
 
 int write_mem(uint8_t opcode, FILE* output, char** args, size_t num_args);
 
-int write_branch(uint8_t opcode, FILE* output, char** args, size_t num_args, 
-    uint32_t addr, SymbolTable* symtbl);
+int write_branch(uint8_t opcode, FILE* output, char** args, size_t num_args,
+                 uint32_t addr, SymbolTable* symtbl);
 
-int write_jump(uint8_t opcode, FILE* output, char** args, size_t num_args, 
-    uint32_t addr, SymbolTable* reltbl);
+int write_jump(uint8_t opcode, FILE* output, char** args, size_t num_args,
+               uint32_t addr, SymbolTable* reltbl);
 
 #endif
