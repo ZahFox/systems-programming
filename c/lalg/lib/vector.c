@@ -5,8 +5,12 @@
 #include "vector.h"
 #include "error.h"
 
-static IntVec* INT_VECTOR_BUFFER[1000];
-u_int8_t INT_VECTOR_BUFFER_INDEX = 0;
+#define MAX_BUFFER_SIZE 1000
+#define MIN_VECTOR_SIZE 1
+#define MAX_VECTOR_SIZE 4
+
+static IntVec* INT_VECTOR_BUFFER[MAX_BUFFER_SIZE];
+static u_int16_t INT_VECTOR_BUFFER_INDEX = 0;
 
 void flush_vector_buffers() {
   for (int i = 0; i < INT_VECTOR_BUFFER_INDEX; i++) {
@@ -18,16 +22,25 @@ void flush_vector_buffers() {
 }
 
 IntVec* create_int_vec(int size, int* data) {
-  if (size < 1 || size > 4) {
-    throw_err(LALG_ERR_VEC_SIZE);
+  if (size < MIN_VECTOR_SIZE || size > MAX_VECTOR_SIZE) {
+    return throw_err(LALG_ERR_VEC_SIZE);
+  } else if (INT_VECTOR_BUFFER_INDEX >= MAX_BUFFER_SIZE) {
+    return throw_err(LALG_ERR_BUFFER_OVERFLOW);
   }
 
   IntVec* vec = malloc(sizeof(IntVec));
+  if (!vec) {
+    return throw_err(LALG_ERR_UNDEFINED);
+  }
+
   int data_size = sizeof(int) * size;
   vec->data = malloc(data_size);
+  if (!vec->data) {
+    return throw_err(LALG_ERR_UNDEFINED);
+  }
+
   memcpy(vec->data, data, data_size);
   *(int*)&vec->rows = size;
-
   INT_VECTOR_BUFFER[INT_VECTOR_BUFFER_INDEX] = vec;
   INT_VECTOR_BUFFER_INDEX++;
   return vec;

@@ -4,7 +4,7 @@
 
 #include "error.h"
 
-void throw_err(LALG_ERR code) {
+void* throw_err(LALG_ERR code) {
   switch (code) {
     case LALG_ERR_UNDEFINED: {
       fputs("Error (LALG_ERR_UNDEFINED): Encountered an unexpected error.",
