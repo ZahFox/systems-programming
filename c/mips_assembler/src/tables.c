@@ -4,6 +4,7 @@
 
 const int SYMTBL_NON_UNIQUE = 0;
 const int SYMTBL_UNIQUE_NAME = 1;
+const int INITIAL_CAPACITY = 200;
 
 /*******************************
  * Helper Functions
@@ -37,12 +38,36 @@ void write_symbol(FILE* output, uint32_t addr, const char* name) {
    to store this value for use during add_to_table().
  */
 SymbolTable* create_table(int mode) {
-  /* YOUR CODE HERE */
-  return NULL;
+  SymbolTable* tbl = malloc(sizeof(SymbolTable));
+  if (tbl == NULL) {
+    allocation_failed();
+  }
+
+  Symbol* symbols = malloc(sizeof(Symbol) * INITIAL_CAPACITY);
+  if (symbols == NULL) {
+    allocation_failed();
+  }
+
+  tbl->tbl = symbols;
+  tbl->len = 0;
+  tbl->cap = INITIAL_CAPACITY;
+  tbl->mode = mode;
+
+  return tbl;
 }
 
 /* Frees the given SymbolTable and all associated memory. */
-void free_table(SymbolTable* table) { /* YOUR CODE HERE */ }
+void free_table(SymbolTable* table) {
+  if (table == NULL) {
+    return;
+  }
+
+  if (table->tbl != NULL) {
+    free(table->tbl);
+  }
+
+  free(table);
+}
 
 /* Adds a new symbol and its address to the SymbolTable pointed to by TABLE.
    ADDR is given as the byte offset from the first instruction. The SymbolTable
@@ -67,11 +92,18 @@ int add_to_table(SymbolTable* table, const char* name, uint32_t addr) {
    NAME is not present in TABLE, return -1.
  */
 int64_t get_addr_for_symbol(SymbolTable* table, const char* name) {
-  /* YOUR CODE HERE */
+  Symbol* sp = table->tbl;
+  for (int i = 0; i < table->len; i++) {
+    Symbol* s = sp + i;
+    if (strcmp(s->name, name) == 0) {
+      return s->addr;
+    }
+  }
   return -1;
 }
 
 /* Writes the SymbolTable TABLE to OUTPUT. You should use write_symbol() to
    perform the write. Do not print any additional whitespace or characters.
  */
-void write_table(SymbolTable* table, FILE* output) { /* YOUR CODE HERE */ }
+void write_table(SymbolTable* table, FILE* output) { /* YOUR CODE HERE */
+}
