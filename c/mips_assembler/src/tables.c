@@ -84,8 +84,35 @@ void free_table(SymbolTable* table) {
    Otherwise, you should store the symbol name and address and return 0.
  */
 int add_to_table(SymbolTable* table, const char* name, uint32_t addr) {
-  /* YOUR CODE HERE */
-  return -1;
+  if (addr % 4) {
+    addr_alignment_incorrect();
+    return -1;
+  }
+
+  if (table->mode == SYMTBL_UNIQUE_NAME) {
+    int64_t addr = get_addr_for_symbol(table, name);
+    if (addr != -1) {
+      name_already_exists(name);
+      return -1;
+    }
+  }
+
+  if (table->len == table->cap) {
+    int newCap = table->cap + INITIAL_CAPACITY;
+    table->tbl = realloc(table->tbl, sizeof(Symbol) * newCap);
+
+    if (table->tbl == NULL) {
+      allocation_failed();
+    }
+
+    table->cap = newCap;
+  }
+
+  Symbol* s = (table->tbl + table->len);
+  table->len++;
+  s->addr = addr;
+  strcpy(s->name, name);
+  return 0;
 }
 
 /* Returns the address (byte offset) of the given symbol. If a symbol with name
