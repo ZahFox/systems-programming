@@ -50,10 +50,10 @@ map:
 	sw      $v0  0($s0)     # store the returned value back into the node
 	lw      $a0, 4($s0)     # load the address of the next node into $a0
 
-    lw      $s1, 8($sp)
-    lw      $s0, 4($sp)
-    lw      $ra, 0($sp)
-    addiu   $sp, $sp, 12
+        lw      $s1, 8($sp)
+        lw      $s0, 4($sp)
+	lw      $ra, 0($sp)
+    	addiu   $sp, $sp, 12
 	j       map             # recurse
 
 done:
