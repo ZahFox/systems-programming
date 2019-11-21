@@ -71,6 +71,7 @@ unsigned write_pass_one(FILE* output, const char* name, char** args,
  */
 int translate_inst(FILE* output, const char* name, char** args, size_t num_args,
                    uint32_t addr, SymbolTable* symtbl, SymbolTable* reltbl) {
+  // A - instructions
   if (strcmp(name, "addu") == 0)
     return write_rtype(0x21, output, args, num_args);
   else if (strcmp(name, "or") == 0)
@@ -80,9 +81,40 @@ int translate_inst(FILE* output, const char* name, char** args, size_t num_args,
   else if (strcmp(name, "sltu") == 0)
     return write_rtype(0x2b, output, args, num_args);
   else if (strcmp(name, "sll") == 0)
-    return write_shift(0x00, output, args, num_args);
+    return write_rtype(0x00, output, args, num_args);
   else if (strcmp(name, "jr") == 0)
-    return write_shift(0x08, output, args, num_args);
+    return write_rtype(0x08, output, args, num_args);
+
+  // I - instructions
+  else if (strcmp(name, "addiu") == 0)
+    return write_addiu(0x09, output, args, num_args);
+  else if (strcmp(name, "ori") == 0)
+    return write_ori(0x0d, output, args, num_args);
+  else if (strcmp(name, "lui") == 0)
+    return write_lui(0x0f, output, args, num_args);
+  else if (strcmp(name, "lb") == 0)
+    return write_mem(0x20, output, args, num_args);
+  else if (strcmp(name, "lbu") == 0)
+    return write_mem(0x24, output, args, num_args);
+  else if (strcmp(name, "lw") == 0)
+    return write_mem(0x23, output, args, num_args);
+  else if (strcmp(name, "sb") == 0)
+    return write_mem(0x28, output, args, num_args);
+  else if (strcmp(name, "sw") == 0)
+    return write_mem(0x2b, output, args, num_args);
+  else if (strcmp(name, "beq") == 0)
+    return write_branch(0x04, output, args, num_args, addr, symtbl);
+  else if (strcmp(name, "bne") == 0)
+    return write_branch(0x05, output, args, num_args, addr, symtbl);
+
+  // J - instructions
+  else if (strcmp(name, "j") == 0) {
+    return write_jump(0x02, output, args, num_args, addr, reltbl);
+
+  } else if (strcmp(name, "jal") == 0) {
+    return write_jump(0x03, output, args, num_args, addr, reltbl);
+  }
+
   else
     return -1;
 }
@@ -131,22 +163,106 @@ int write_rtype(uint8_t funct, FILE* output, char** args, size_t num_args) {
   return 0;
 }
 
-/* A helper function for writing shift instructions. You should use
-   translate_num() to parse numerical arguments. translate_num() is defined
-   in translate_utils.h.
-
-   This function is INCOMPLETE. Complete the implementation below. You will
-   find bitwise operations to be the cleanest way to complete this function.
+/**
+ * A helper function for writing I-type instructions
  */
-int write_shift(uint8_t funct, FILE* output, char** args, size_t num_args) {
-  // Perhaps perform some error checking?
+int write_itype(uint8_t op, FILE* output, char** args, size_t num_args) {
+  if (num_args != 3) {
+    return -1;
+  }
+}
 
-  long int shamt;
-  int rd = translate_reg(args[0]);
+int write_addiu(uint8_t opcode, FILE* output, char** args, size_t num_args) {
+  if (num_args != 3) {
+    return -1;
+  }
+
+  int rs = translate_reg(args[0]);
   int rt = translate_reg(args[1]);
-  int err = translate_num(&shamt, args[2], 0, 31);
+  int immediate;
+  if (translate_num(&immediate, args[2], 0, 65535)) {
+    return -1;
+  }
 
-  uint32_t instruction = 0;
+  uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | immediate;
+  write_inst_hex(output, instruction);
+  return 0;
+}
+
+int write_ori(uint8_t opcode, FILE* output, char** args, size_t num_args) {
+  if (num_args != 3) {
+    return -1;
+  }
+
+  int rs = translate_reg(args[0]);
+  int rt = translate_reg(args[1]);
+  int immediate;
+  if (translate_num(&immediate, args[2], 0, 65535)) {
+    return -1;
+  }
+
+  uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | immediate;
+  write_inst_hex(output, instruction);
+  return 0;
+}
+
+int write_lui(uint8_t opcode, FILE* output, char** args, size_t num_args) {
+  if (num_args != 2) {
+    return -1;
+  }
+
+  int rt = translate_reg(args[0]);
+  int immediate;
+  if (translate_num(&immediate, args[1], 0, 65535)) {
+    return -1;
+  }
+
+  uint32_t instruction = (opcode << 26) | (rt << 16) | immediate;
+  write_inst_hex(output, instruction);
+  return 0;
+}
+
+int write_mem(uint8_t opcode, FILE* output, char** args, size_t num_args) {
+  // TODO: Implement this..
+}
+
+/**
+ * A helper function for writing I-type branch instructions
+ */
+int write_branch(uint8_t opcode, FILE* output, char** args, size_t num_args,
+                 uint32_t addr, SymbolTable* symtbl) {
+  if (num_args != 3) {
+    return -1;
+  }
+
+  int64_t sym_addr = get_addr_for_symbol(symtbl, args[2]);
+  if (sym_addr == -1) {
+    return -1;
+  }
+
+  int rs = translate_reg(args[0]);
+  int rt = translate_reg(args[1]);
+
+  uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | sym_addr;
+  write_inst_hex(output, instruction);
+  return 0;
+}
+
+/**
+ * A helper function for writing J-type instructions
+ */
+int write_jump(uint8_t opcode, FILE* output, char** args, size_t num_args,
+               uint32_t addr, SymbolTable* reltbl) {
+  if (num_args != 1) {
+    return -1;
+  }
+
+  int err = add_to_table(reltbl, args[0], addr);
+  if (err == -1) {
+    return -1;
+  }
+
+  uint32_t instruction = opcode << 26;
   write_inst_hex(output, instruction);
   return 0;
 }
