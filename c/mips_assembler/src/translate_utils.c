@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 void write_inst_string(FILE* output, const char* name, char** args,
                        int num_args) {
   fprintf(output, "%s", name);

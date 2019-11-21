@@ -81,26 +81,52 @@ int translate_inst(FILE* output, const char* name, char** args, size_t num_args,
     return write_rtype(0x2b, output, args, num_args);
   else if (strcmp(name, "sll") == 0)
     return write_shift(0x00, output, args, num_args);
-  /* YOUR CODE HERE */
+  else if (strcmp(name, "jr") == 0)
+    return write_shift(0x08, output, args, num_args);
   else
     return -1;
 }
 
-/* A helper function for writing most R-type instructions. You should use
-   translate_reg() to parse registers and write_inst_hex() to write to
-   OUTPUT. Both are defined in translate_utils.h.
-
-   This function is INCOMPLETE. Complete the implementation below. You will
-   find bitwise operations to be the cleanest way to complete this function.
+/**
+ * A helper function for writing R-type instructions
  */
 int write_rtype(uint8_t funct, FILE* output, char** args, size_t num_args) {
-  // Perhaps perform some error checking?
+  uint32_t instruction = funct;
 
-  int rd = translate_reg(args[0]);
-  int rs = translate_reg(args[1]);
-  int rt = translate_reg(args[2]);
+  if (funct == 0x08) {  // jr $rs
+    if (num_args != 1) {
+      return -1;
+    }
 
-  uint32_t instruction = 0;
+    int rs = translate_reg(args[0]);
+    instruction = instruction | (rs << 21);
+  } else if (funct == 0x00) {  // sll $rd, $rt, shamt
+    if (num_args != 3) {
+      return -1;
+    }
+
+    int shamt = 0;
+    int rd = translate_reg(args[0]);
+    int rt = translate_reg(args[1]);
+
+    int result = translate_num(&shamt, args[2], 0, 31);
+    if (result == -1) {
+      return -1;
+    }
+
+    instruction = instruction | (rt << 16) | (rd << 11) | (shamt << 6);
+  } else {  // op $rd, $rs, $rt
+    if (num_args != 3) {
+      return -1;
+    }
+
+    int rd = translate_reg(args[0]);
+    int rs = translate_reg(args[1]);
+    int rt = translate_reg(args[2]);
+
+    instruction = instruction | (rs << 21) | (rt << 16) | (rd << 11);
+  }
+
   write_inst_hex(output, instruction);
   return 0;
 }
