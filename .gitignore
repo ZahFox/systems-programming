@@ -54,3 +54,6 @@ dkms.conf
 # IDE
 **/*.idea
 cmake-build-debug
+
+# Rust Output Files
+rust/**/target
