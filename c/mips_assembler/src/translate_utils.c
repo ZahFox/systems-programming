@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 void write_inst_string(FILE* output, const char* name, char** args,
                        int num_args) {
   fprintf(output, "%s", name);
@@ -61,9 +60,11 @@ int translate_num(long int* output, const char* str, long int lower_bound,
     return -1;
   }
 
-  *output = strtol(str, NULL, 0);
-  if (*output >= lower_bound && *output <= upper_bound) {
-    return 1;
+  char* end;
+  *output = strtol(str, &end, 0);
+
+  if (!(*end) && *output >= lower_bound && *output <= upper_bound) {
+    return 0;
   }
 
   return -1;
@@ -112,5 +113,5 @@ int translate_reg(const char* str) {
   else if (strcmp(str, "$ra") == 0)
     return 31;
   else
-    return 0;
+    return -1;
 }

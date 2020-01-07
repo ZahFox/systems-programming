@@ -137,11 +137,11 @@ int write_rtype(uint8_t funct, FILE* output, char** args, size_t num_args) {
       return -1;
     }
 
-    int shamt = 0;
+    long int shamt = 0;
     int rd = translate_reg(args[0]);
     int rt = translate_reg(args[1]);
 
-    int result = translate_num(&shamt, args[2], 0, 31);
+    long int result = translate_num(&shamt, args[2], 0, 31);
     if (result == -1) {
       return -1;
     }
@@ -163,15 +163,6 @@ int write_rtype(uint8_t funct, FILE* output, char** args, size_t num_args) {
   return 0;
 }
 
-/**
- * A helper function for writing I-type instructions
- */
-int write_itype(uint8_t op, FILE* output, char** args, size_t num_args) {
-  if (num_args != 3) {
-    return -1;
-  }
-}
-
 int write_addiu(uint8_t opcode, FILE* output, char** args, size_t num_args) {
   if (num_args != 3) {
     return -1;
@@ -179,7 +170,7 @@ int write_addiu(uint8_t opcode, FILE* output, char** args, size_t num_args) {
 
   int rs = translate_reg(args[0]);
   int rt = translate_reg(args[1]);
-  int immediate;
+  long int immediate;
   if (translate_num(&immediate, args[2], 0, 65535)) {
     return -1;
   }
@@ -196,7 +187,7 @@ int write_ori(uint8_t opcode, FILE* output, char** args, size_t num_args) {
 
   int rs = translate_reg(args[0]);
   int rt = translate_reg(args[1]);
-  int immediate;
+  long int immediate;
   if (translate_num(&immediate, args[2], 0, 65535)) {
     return -1;
   }
@@ -212,7 +203,7 @@ int write_lui(uint8_t opcode, FILE* output, char** args, size_t num_args) {
   }
 
   int rt = translate_reg(args[0]);
-  int immediate;
+  long int immediate;
   if (translate_num(&immediate, args[1], 0, 65535)) {
     return -1;
   }
@@ -223,7 +214,20 @@ int write_lui(uint8_t opcode, FILE* output, char** args, size_t num_args) {
 }
 
 int write_mem(uint8_t opcode, FILE* output, char** args, size_t num_args) {
-  // TODO: Implement this..
+  if (num_args != 3) {
+    return -1;
+  }
+
+  int rt = translate_reg(args[0]);
+  int rs = translate_reg(args[2]);
+  long int immediate;
+  if (translate_num(&immediate, args[1], 0, 65535)) {
+    return -1;
+  }
+
+  uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | immediate;
+  write_inst_hex(output, instruction);
+  return 0;
 }
 
 /**
