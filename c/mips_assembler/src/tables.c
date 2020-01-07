@@ -109,9 +109,11 @@ int add_to_table(SymbolTable* table, const char* name, uint32_t addr) {
   }
 
   Symbol* s = (table->tbl + table->len);
-  table->len++;
+  table->len += 1;
+
   s->addr = addr;
-  strcpy(s->name, name);
+  strcpy(&s->name, name);
+
   return 0;
 }
 
@@ -122,7 +124,7 @@ int64_t get_addr_for_symbol(SymbolTable* table, const char* name) {
   Symbol* sp = table->tbl;
   for (int i = 0; i < table->len; i++) {
     Symbol* s = sp + i;
-    if (strcmp(s->name, name) == 0) {
+    if (strcmp(&s->name, name) == 0) {
       return s->addr;
     }
   }
