@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gcc -o main -lncurses -Wall main.c
