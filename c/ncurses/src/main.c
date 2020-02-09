@@ -46,11 +46,12 @@ void run(void) {
   attroff(COLOR_PAIR(1));
 
   create_box(&win, TRUE);
+  sandbox* s = new_sandbox();
 
   while ((ch = getch()) != KEY_F(2)) {
     clear();
     tty_size size = get_tty_size();
-    render_header(size.rows, size.cols);
+    render_header(s, size.rows, size.cols);
 
     switch (ch) {
       case KEY_LEFT:
