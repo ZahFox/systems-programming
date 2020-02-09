@@ -78,4 +78,6 @@ void run(void) {
 
     msleep(16);
   }
+
+  free(s);
 }
