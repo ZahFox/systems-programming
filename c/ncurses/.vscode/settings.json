@@ -1,0 +1,15 @@
+{
+  "files.associations": {
+    "array": "c",
+    "*.tcc": "c",
+    "memory": "c",
+    "future": "c",
+    "istream": "c",
+    "functional": "c",
+    "tuple": "c",
+    "utility": "c",
+    "variant": "c",
+    "window.h": "c",
+    "curses.h": "c"
+  }
+}
