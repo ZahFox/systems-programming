@@ -10,6 +10,12 @@
     "utility": "c",
     "variant": "c",
     "window.h": "c",
-    "curses.h": "c"
+    "curses.h": "c",
+    "locale.h": "c",
+    "optional": "cpp",
+    "ostream": "cpp",
+    "ratio": "cpp",
+    "system_error": "cpp",
+    "type_traits": "cpp"
   }
 }

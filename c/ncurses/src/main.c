@@ -1,3 +1,5 @@
+#include <locale.h>
+
 #include "sandbox.h"
 #include "window.h"
 
@@ -24,6 +26,7 @@ int main(void) {
 }
 
 void init(void) {
+  setlocale(LC_ALL, "");
   initscr();
 
   if (has_colors() == FALSE) {
@@ -60,28 +63,31 @@ void run(void) {
     tty_size size = get_tty_size();
     render_header(s, size.rows, size.cols);
 
+    wchar_t characters[] = {L'\uE030', L'\u01D5'};
+    mvaddch(5, 0, characters[0]);
+    mvaddch(5, 5, characters[1]);
+
+    create_box(&win, FALSE);
+
     switch (ch) {
       case KEY_LEFT:
-        create_box(&win, FALSE);
         --win.startx;
-        create_box(&win, TRUE);
         break;
       case KEY_RIGHT:
-        create_box(&win, FALSE);
         ++win.startx;
-        create_box(&win, TRUE);
         break;
       case KEY_UP:
-        create_box(&win, FALSE);
         --win.starty;
-        create_box(&win, TRUE);
         break;
       case KEY_DOWN:
-        create_box(&win, FALSE);
         ++win.starty;
-        create_box(&win, TRUE);
         break;
     }
+
+    win.startx = CLAMP(win.startx, 0, size.cols - 11);
+    win.starty = CLAMP(win.starty, HEADER_ROW_SIZE, size.rows - 4);
+
+    create_box(&win, TRUE);
 
     msleep(16);
   }

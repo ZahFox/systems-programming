@@ -6,4 +6,7 @@
 
 int msleep(long msec);
 
+#define CLAMP(value, low, high) \
+  (value < low) ? low : (value > high) ? high : value
+
 #endif

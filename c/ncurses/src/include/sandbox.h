@@ -3,6 +3,7 @@
 
 #define MAX_ROW_SIZE 3840
 #define MAX_HEADER_SIZE MAX_ROW_SIZE * 3
+#define HEADER_ROW_SIZE 3
 
 #include "common.h"
 
