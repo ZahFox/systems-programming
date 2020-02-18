@@ -25,11 +25,18 @@ int main(void) {
 
 void init(void) {
   initscr();
+
+  if (has_colors() == FALSE) {
+    printf("Your terminal does not support color\n");
+    endwin();
+    exit(1);
+  }
+
+  start_color();
   cbreak();
   keypad(stdscr, TRUE);
   timeout(0);
   noecho();
-  refresh();
 }
 
 void run(void) {
