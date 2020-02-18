@@ -1,5 +1,6 @@
 #include <locale.h>
 
+#include "framebuffer.h"
 #include "sandbox.h"
 #include "window.h"
 
